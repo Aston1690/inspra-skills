@@ -1,0 +1,1399 @@
+<!--
+  CASE STUDY TEMPLATE v3 — Automate Accelerator
+  ───────────────────────────────────────────────
+  This is a WORKING REFERENCE template with real andersenIT content.
+
+  When generating a new case study:
+  1. Copy this entire file to the output directory
+  2. Replace ALL content (headlines, stats, descriptions, logos) with the new client's data
+  3. Keep ALL CSS unchanged — it is the Automate Accelerator design system
+  4. Keep the section structure and class names unchanged
+  5. Only modify text content, image src, logo paths, and SVG icon choices
+
+  LOGO RULES:
+  - Hero orange pill: text "Automate" (no image needed)
+  - Hero outline pill: client logo with filter:brightness(0) invert(1) for dark bg, OR plain text
+  - CTA: text-based dual branding (no images)
+  - If ANY logo is invisible, use text instead
+
+  CIRCULAR RING MATH (r=24 for top metrics, r=18 for breakdown):
+  - circumference = 2 * PI * r
+  - stroke-dashoffset = circumference * (1 - percentage/100)
+  - Top metrics (r=24): circumference=150.8
+  - Breakdown (r=18): circumference=113.1
+
+  COLOUR-CODING:
+  - Step cards: orange, green, teal, purple (in order)
+  - Breakdown left bars: blue, purple, orange, green (vary per industry)
+  - Voice stat icons: purple, green, orange, blue
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>andersenIT Case Study — Building a Predictable Revenue Ecosystem</title>
+    <meta name="description" content="How Automate Accelerator built a multi-channel outbound system for andersenIT across healthcare, legal, construction and logistics.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+
+:root {
+  --bg-dark: #0c0c0e;
+  --bg-dark-alt: #141417;
+  --bg-dark-card: #18181c;
+  --bg-dark-card-hover: #1e1e23;
+  --border-dark: rgba(255,255,255,0.07);
+
+  --bg-light: #fafafa;
+  --bg-light-alt: #f3f3f5;
+  --bg-white: #ffffff;
+  --border-light: #e5e5ea;
+
+  --text-white: #ffffff;
+  --text-light-primary: #1a1a1e;
+  --text-light-secondary: #6b6b76;
+  --text-dark-secondary: #8b8b96;
+
+  --accent: #ff6900;
+  --accent-hover: #ff8533;
+  --accent-dim: rgba(255,105,0,0.08);
+  --accent-border: rgba(255,105,0,0.2);
+  --accent-glow: rgba(255,105,0,0.12);
+
+  --green: #34c759;
+  --blue: #007aff;
+  --purple: #af52de;
+  --teal: #5ac8fa;
+  --orange: #ff9500;
+  --red: #ff3b30;
+
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius-xl: 24px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-size: 16px; line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg-dark);
+  color: var(--text-white);
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { text-decoration: none; transition: all 0.25s cubic-bezier(0.25,0.46,0.45,0.94); }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+/* Page label */
+.page-label {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.page-label-dark { color: var(--text-dark-secondary); }
+.page-label-light { color: var(--accent); }
+
+/* Section heading */
+.section-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+/* ══════════════════════════════════════
+   HERO
+   ══════════════════════════════════════ */
+.hero {
+  background: var(--bg-dark);
+  padding: 80px 0 0;
+  position: relative;
+  overflow: hidden;
+  min-height: 100dvh;
+}
+/* Ambient glows */
+.hero::before {
+  content: ''; position: absolute;
+  top: -200px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(255,105,0,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute;
+  bottom: -200px; left: -150px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(255,105,0,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Badge pill */
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 20px; border-radius: 100px;
+  background: rgba(255,105,0,0.1);
+  border: 1px solid rgba(255,105,0,0.2);
+  font-family: var(--font-display);
+  font-size: 12px; font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  margin-bottom: 40px;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.5vw, 64px);
+  font-weight: 800; line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin-bottom: 24px;
+}
+.hero h1 span { color: var(--accent); }
+.hero-subtitle {
+  font-size: 16px; line-height: 1.75;
+  color: var(--text-dark-secondary);
+  max-width: 460px;
+  margin-bottom: 36px;
+}
+
+/* Logo pills */
+.logo-pills {
+  display: flex; align-items: center; gap: 12px;
+}
+.logo-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+}
+.logo-pill-accent {
+  background: var(--accent); color: #fff;
+}
+.logo-pill-outline {
+  background: transparent; color: var(--text-white);
+  border: 1.5px solid rgba(255,255,255,0.2);
+}
+.logo-pill img { height: 16px; width: auto; }
+.logo-pill-accent img { filter: brightness(0) invert(1); }
+.pill-divider {
+  width: 20px; height: 1px;
+  background: rgba(255,255,255,0.15);
+}
+
+/* Hero image */
+.hero-image {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+}
+.hero-image::after {
+  content: ''; position: absolute; inset: 0;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255,255,255,0.08);
+  pointer-events: none;
+}
+.hero-image img {
+  width: 100%; height: 420px;
+  object-fit: cover;
+  filter: grayscale(15%);
+}
+
+/* Hero stats */
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 72px;
+  padding-bottom: 64px;
+  position: relative; z-index: 1;
+}
+.hero-stat-card {
+  background: var(--bg-dark-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  text-align: center;
+}
+.hero-stat-card h3 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 900; color: var(--accent);
+  letter-spacing: -0.03em; line-height: 1;
+}
+.hero-stat-card p {
+  font-size: 12px; color: var(--text-dark-secondary);
+  margin-top: 8px; font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════
+   BUSINESS OVERVIEW (Light)
+   ══════════════════════════════════════ */
+.overview {
+  background: var(--bg-light);
+  color: var(--text-light-primary);
+  padding: 96px 0 112px;
+}
+.overview .section-heading {
+  font-size: clamp(32px, 4.5vw, 52px);
+  margin-bottom: 8px;
+}
+.overview .section-heading span { color: var(--accent); }
+.overview-underline {
+  width: 48px; height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-bottom: 48px;
+}
+
+/* Info cards */
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 56px;
+}
+.info-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  display: flex; align-items: center; gap: 16px;
+  transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.info-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+.info-card-icon {
+  width: 48px; height: 48px; flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.info-card-icon svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.info-card h4 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+.info-card p {
+  font-size: 12px; color: var(--text-light-secondary);
+  font-weight: 500;
+}
+
+/* Two-col: About + Challenge */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px; align-items: start;
+}
+.about-block h3 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+.about-block p {
+  font-size: 15px; line-height: 1.8;
+  color: var(--text-light-secondary);
+  margin-bottom: 14px;
+}
+
+/* Challenge — dark card */
+.challenge-card {
+  background: var(--bg-dark-card);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+  color: var(--text-white);
+}
+.challenge-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--accent);
+}
+.challenge-item {
+  margin-bottom: 20px;
+}
+.challenge-item:last-child { margin-bottom: 0; }
+.challenge-item h4 {
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+  color: var(--text-white);
+  margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.challenge-item h4::before {
+  content: ''; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--accent);
+  flex-shrink: 0;
+}
+.challenge-item p {
+  font-size: 13px; color: var(--text-dark-secondary);
+  line-height: 1.6;
+  padding-left: 14px;
+}
+
+/* ══════════════════════════════════════
+   THE SOLUTION (Dark)
+   ══════════════════════════════════════ */
+.solution {
+  background: var(--bg-dark);
+  padding: 96px 0 112px;
+}
+.solution .page-label { color: var(--text-dark-secondary); }
+.solution .section-heading {
+  font-size: clamp(32px, 4.5vw, 52px);
+  color: var(--text-white);
+  margin-bottom: 12px;
+}
+.solution .section-heading span { color: var(--accent); }
+.solution-subtitle {
+  font-size: 15px; color: var(--text-dark-secondary);
+  max-width: 520px; margin-bottom: 48px;
+}
+
+.solution-steps { display: flex; flex-direction: column; gap: 16px; }
+.step-card {
+  background: var(--bg-dark-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-xl);
+  padding: 36px 40px;
+  display: flex; gap: 24px; align-items: flex-start;
+  transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+  position: relative;
+}
+.step-card:hover {
+  background: var(--bg-dark-card-hover);
+  border-color: rgba(255,255,255,0.1);
+}
+.step-icon {
+  width: 48px; height: 48px; flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+}
+.step-icon svg { width: 24px; height: 24px; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.step-icon-orange { background: rgba(255,105,0,0.12); }
+.step-icon-orange svg { stroke: var(--accent); }
+.step-icon-green { background: rgba(52,199,89,0.12); }
+.step-icon-green svg { stroke: var(--green); }
+.step-icon-teal { background: rgba(90,200,250,0.12); }
+.step-icon-teal svg { stroke: var(--teal); }
+.step-icon-purple { background: rgba(175,82,222,0.12); }
+.step-icon-purple svg { stroke: var(--purple); }
+.step-body { flex: 1; }
+.step-body h4 {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  color: var(--text-white);
+  margin-bottom: 8px; letter-spacing: -0.01em;
+}
+.step-body > p {
+  font-size: 14px; color: var(--text-dark-secondary);
+  line-height: 1.7; margin-bottom: 16px;
+}
+.step-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.step-pills span {
+  padding: 7px 16px; border-radius: var(--radius-xs);
+  font-size: 12px; font-weight: 600;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-dark);
+  color: var(--text-dark-secondary);
+}
+.step-number {
+  position: absolute; top: 36px; right: 40px;
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+  color: rgba(255,255,255,0.15);
+}
+
+/* ══════════════════════════════════════
+   EMAIL CAMPAIGN PERFORMANCE (Light)
+   ══════════════════════════════════════ */
+.performance {
+  background: var(--bg-light);
+  color: var(--text-light-primary);
+  padding: 96px 0 112px;
+}
+.performance .section-heading {
+  font-size: clamp(32px, 4.5vw, 52px);
+  margin-bottom: 12px;
+}
+.performance .section-heading span { color: var(--accent); }
+.perf-subtitle {
+  font-size: 15px; color: var(--text-light-secondary);
+  max-width: 560px; margin-bottom: 48px; line-height: 1.7;
+}
+
+/* Top metrics with circular ring */
+.top-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 56px;
+}
+.top-metric-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  display: flex; align-items: center; gap: 20px;
+}
+.metric-ring {
+  width: 56px; height: 56px; flex-shrink: 0;
+  position: relative;
+}
+.metric-ring svg { width: 56px; height: 56px; transform: rotate(-90deg); }
+.metric-ring-bg { stroke: #e8e8ec; fill: none; stroke-width: 4; }
+.metric-ring-fill { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s cubic-bezier(0.25,0.46,0.45,0.94); }
+.metric-ring-orange .metric-ring-fill { stroke: var(--accent); }
+.metric-ring-green .metric-ring-fill { stroke: var(--green); }
+.metric-ring-blue .metric-ring-fill { stroke: var(--blue); }
+.metric-ring-icon {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.metric-ring-icon svg { width: 20px; height: 20px; transform: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.top-metric-card .metric-label {
+  font-size: 11px; color: var(--text-light-secondary);
+  font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 4px;
+}
+.top-metric-card .metric-value {
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 900;
+  letter-spacing: -0.04em; line-height: 1;
+}
+.top-metric-card .metric-sub {
+  font-size: 12px; color: var(--text-light-secondary);
+  margin-top: 4px;
+}
+
+/* Breakdown */
+.breakdown-heading {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+.breakdown-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 0;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+}
+.breakdown-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+.breakdown-inner {
+  display: grid;
+  grid-template-columns: 4px 1fr;
+}
+.breakdown-bar-left { border-radius: 4px 0 0 4px; }
+.bar-blue { background: var(--blue); }
+.bar-orange { background: var(--orange); }
+.bar-green { background: var(--green); }
+.bar-purple { background: var(--purple); }
+.breakdown-content { padding: 24px 28px; }
+.breakdown-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.breakdown-label {
+  display: flex; align-items: center; gap: 10px;
+}
+.breakdown-label h4 {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  letter-spacing: -0.01em;
+}
+/* Circular % badge */
+.pct-ring {
+  width: 44px; height: 44px; position: relative;
+}
+.pct-ring svg { width: 44px; height: 44px; transform: rotate(-90deg); }
+.pct-ring-bg { stroke: #e8e8ec; fill: none; stroke-width: 3; }
+.pct-ring-fill { fill: none; stroke-width: 3; stroke-linecap: round; }
+.pct-ring-text {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+}
+.breakdown-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.bd-metric {
+  background: var(--bg-light-alt);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  text-align: center;
+}
+.bd-metric .bd-val {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.bd-metric .bd-val-accent { color: var(--accent); }
+.bd-metric .bd-val-green { color: var(--green); }
+.bd-metric .bd-val-blue { color: var(--blue); }
+.bd-metric .bd-lbl {
+  font-size: 11px; color: var(--text-light-secondary);
+  font-weight: 500; margin-top: 2px;
+}
+
+/* Follow-up callout (dark) */
+.followup-card {
+  background: var(--bg-dark-card);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  display: flex; gap: 16px; align-items: flex-start;
+  margin-top: 24px;
+}
+.followup-icon {
+  width: 44px; height: 44px; flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.followup-icon svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2; }
+.followup-card h4 {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  color: var(--text-white);
+  margin-bottom: 6px;
+}
+.followup-card p {
+  font-size: 13px; color: var(--text-dark-secondary);
+  line-height: 1.65;
+}
+.followup-card p span { color: var(--accent); font-weight: 600; }
+
+/* ══════════════════════════════════════
+   VOICE OUTREACH (Dark)
+   ══════════════════════════════════════ */
+.voice {
+  background: var(--bg-dark);
+  padding: 96px 0 112px;
+}
+.voice .section-heading {
+  font-size: clamp(28px, 3.5vw, 44px);
+  color: var(--text-white);
+  margin-bottom: 12px;
+}
+.voice .section-heading span { color: var(--accent); }
+.voice-subtitle {
+  font-size: 15px; color: var(--text-dark-secondary);
+  max-width: 520px; margin-bottom: 48px;
+}
+
+/* Stat cards with colored icons */
+.voice-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.voice-stat {
+  background: var(--bg-dark-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: 28px 20px;
+  text-align: center;
+}
+.voice-stat-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+}
+.voice-stat-icon svg { width: 20px; height: 20px; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.vsi-purple { background: rgba(175,82,222,0.15); }
+.vsi-purple svg { stroke: var(--purple); }
+.vsi-green { background: rgba(52,199,89,0.15); }
+.vsi-green svg { stroke: var(--green); }
+.vsi-orange { background: rgba(255,149,0,0.15); }
+.vsi-orange svg { stroke: var(--orange); }
+.vsi-blue { background: rgba(0,122,255,0.15); }
+.vsi-blue svg { stroke: var(--blue); }
+.voice-stat h3 {
+  font-family: var(--font-display);
+  font-size: 32px; font-weight: 900;
+  color: var(--text-white);
+  letter-spacing: -0.03em; line-height: 1;
+}
+.voice-stat p {
+  font-size: 11px; color: var(--text-dark-secondary);
+  margin-top: 6px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* Metric banner */
+.metric-banner {
+  border-radius: var(--radius-xl);
+  padding: 52px 40px;
+  text-align: center;
+  margin-bottom: 40px;
+  background: linear-gradient(135deg, #e05500 0%, var(--accent) 50%, var(--accent-hover) 100%);
+  position: relative; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(255,105,0,0.2);
+}
+.metric-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 25% 40%, rgba(255,255,255,0.1) 0%, transparent 60%);
+}
+.metric-banner::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+.metric-banner h3 {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5vw, 60px);
+  font-weight: 900; color: #fff;
+  letter-spacing: -0.04em; position: relative;
+}
+.metric-banner p {
+  font-size: 14px; color: rgba(255,255,255,0.75);
+  margin-top: 12px; max-width: 480px;
+  margin-left: auto; margin-right: auto; position: relative;
+}
+
+/* Info cards below banner */
+.voice-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.voice-card {
+  background: var(--bg-dark-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+}
+.voice-card h4 {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.voice-card p {
+  font-size: 14px; color: var(--text-dark-secondary);
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════
+   WHAT MADE THIS WORK (Light-dark transition)
+   ══════════════════════════════════════ */
+.success {
+  background: var(--bg-light);
+  color: var(--text-light-primary);
+  padding: 96px 0 112px;
+}
+.success-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.success-header .section-heading {
+  font-size: clamp(32px, 4.5vw, 52px);
+}
+.success-header .section-heading span { color: var(--accent); }
+.success-header p {
+  font-size: 14px; color: var(--text-light-secondary);
+  margin-top: 8px;
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+.pillar-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 36px 28px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.pillar-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-3px); }
+.pillar-card-icon {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-md);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+}
+.pillar-card-icon svg { width: 24px; height: 24px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.pillar-card h4 {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 700;
+  margin-bottom: 10px; letter-spacing: -0.02em;
+}
+.pillar-card p {
+  font-size: 13px; color: var(--text-light-secondary);
+  line-height: 1.65;
+}
+
+/* Framework + Impact */
+.fw-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px; align-items: stretch;
+}
+.fw-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+}
+.fw-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  margin-bottom: 6px; letter-spacing: -0.02em;
+}
+.fw-card .fw-sub {
+  font-size: 13px; color: var(--text-light-secondary);
+  margin-bottom: 24px;
+}
+.checklist { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.checklist li {
+  display: flex; gap: 12px; align-items: flex-start;
+  font-size: 14px; color: var(--text-light-secondary);
+  line-height: 1.6;
+}
+.check-dot {
+  width: 22px; height: 22px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+.check-dot svg { width: 12px; height: 12px; }
+
+/* Impact dark card */
+.impact-card {
+  background: var(--bg-dark-card);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+  color: var(--text-white);
+  display: flex; flex-direction: column;
+}
+.impact-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  color: var(--text-white);
+  margin-bottom: 8px;
+}
+.impact-card .impact-sub {
+  font-size: 13px; color: var(--text-dark-secondary);
+  margin-bottom: 28px; line-height: 1.65; flex: 1;
+}
+.impact-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.impact-stat {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  padding: 18px 14px;
+  text-align: center;
+}
+.impact-stat h4 {
+  font-family: var(--font-display);
+  font-size: 28px; font-weight: 900;
+  color: var(--accent);
+  letter-spacing: -0.03em; line-height: 1;
+}
+.impact-stat p {
+  font-size: 10px; color: var(--text-dark-secondary);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-top: 4px; font-weight: 600;
+}
+
+/* ══════════════════════════════════════
+   CTA (Orange gradient)
+   ══════════════════════════════════════ */
+.cta-section {
+  background: linear-gradient(135deg, #e05500 0%, var(--accent) 40%, var(--accent-hover) 100%);
+  padding: 96px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 60%);
+}
+.cta-section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 800; color: #fff;
+  letter-spacing: -0.035em;
+  margin-bottom: 16px;
+  position: relative;
+}
+.cta-section > .container > p {
+  font-size: 15px; color: rgba(255,255,255,0.75);
+  max-width: 440px; margin: 0 auto 40px;
+  position: relative;
+}
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 36px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  backdrop-filter: blur(8px);
+  position: relative;
+  transition: all 0.3s;
+}
+.cta-btn:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.6);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.cta-btn svg { width: 16px; height: 16px; transition: transform 0.3s; }
+.cta-btn:hover svg { transform: translateX(3px); }
+
+/* CTA logos as text */
+.cta-logos-text {
+  display: flex; align-items: center;
+  justify-content: center; gap: 20px;
+  margin-top: 48px;
+  position: relative;
+}
+.cta-brand {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.cta-brand-divider {
+  width: 32px; height: 1.5px;
+  background: rgba(255,255,255,0.3);
+}
+.cta-tagline {
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  margin-top: 20px; position: relative;
+}
+
+/* Footer */
+footer {
+  background: var(--bg-dark);
+  padding: 32px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dark-secondary);
+  border-top: 1px solid var(--border-dark);
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .container { padding: 0 24px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-image { max-width: 520px; }
+  .overview-grid { grid-template-columns: 1fr; }
+  .top-metrics { grid-template-columns: 1fr; }
+  .voice-stats { grid-template-columns: repeat(2, 1fr); }
+  .voice-cards { grid-template-columns: 1fr; }
+  .pillars { grid-template-columns: 1fr; }
+  .fw-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .container { padding: 0 20px; }
+  .hero { padding-top: 56px; min-height: auto; }
+  .overview, .solution, .performance, .voice, .success, .cta-section { padding: 72px 0; }
+  .hero-stats { grid-template-columns: 1fr; }
+  .info-cards { grid-template-columns: 1fr; }
+  .breakdown-metrics-row { grid-template-columns: 1fr; }
+  .voice-stats { grid-template-columns: 1fr; }
+  .impact-stats { grid-template-columns: 1fr; }
+  .logo-pills { flex-wrap: wrap; }
+}
+    </style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">Success Story</div>
+    <div class="hero-grid">
+      <div>
+        <h1>Building a Predictable<br><span>Revenue Ecosystem</span><br>for andersenIT</h1>
+        <p class="hero-subtitle">How Automate Accelerator transformed andersenIT's outbound with centralised CRM data, high-intent automation, and multi-channel outreach.</p>
+        <div class="logo-pills">
+          <a href="https://automateaccelerator.com" class="logo-pill logo-pill-accent">Automate</a>
+          <div class="pill-divider"></div>
+          <a href="https://www.andersenit.com.au" class="logo-pill logo-pill-outline">
+            <img src="client-logo.png" alt="andersenIT" style="height:20px;width:auto;filter:brightness(0) invert(1);">
+          </a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=520&fit=crop&q=85" alt="IT Services Team">
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat-card">
+        <h3>20,000+</h3>
+        <p>Targeted Emails Delivered Across Industries</p>
+      </div>
+      <div class="hero-stat-card">
+        <h3>13</h3>
+        <p>Industry-Specific Campaigns Launched</p>
+      </div>
+      <div class="hero-stat-card">
+        <h3>200+</h3>
+        <p>High-Intent Replies &amp; Appointments Booked</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BUSINESS OVERVIEW ═══════════ -->
+<section class="overview">
+  <div class="container">
+    <div class="page-label page-label-light">PAGE 02</div>
+    <h2 class="section-heading">Business <span>Overview</span></h2>
+    <div class="overview-underline"></div>
+
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="info-card-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <h4>24+ Years</h4>
+          <p>Industry Experience</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div>
+          <h4>Mid-Large</h4>
+          <p>Enterprise Focus</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 10-16 0c0 3 2.7 7 8 11.7z"/></svg>
+        </div>
+        <div>
+          <h4>Australia</h4>
+          <p>Primary Market</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="overview-grid">
+      <div class="about-block">
+        <h3>Who They Are</h3>
+        <p>andersenIT is an Australian IT consultancy with over 24 years of experience delivering managed services, professional services, cybersecurity, cloud and infrastructure solutions to mid-market and enterprise organisations across Australia.</p>
+        <p>With a strong reputation for technical excellence and long-term partnerships, andersenIT wanted to scale demand generation beyond referrals and traditional channels into a predictable, repeatable revenue system.</p>
+      </div>
+      <div class="challenge-card">
+        <h3>The Challenge</h3>
+        <div class="challenge-item">
+          <h4>Passive Outreach</h4>
+          <p>LinkedIn activity was not continuous and free-value content alone was not driving pipeline.</p>
+        </div>
+        <div class="challenge-item">
+          <h4>Fragmented Messaging</h4>
+          <p>Campaigns were not segmented by vertical, pain point, or decision-maker authority.</p>
+        </div>
+        <div class="challenge-item">
+          <h4>Generic Outreach</h4>
+          <p>Messaging failed to distinguish between the needs of a CIO versus a Head of Compliance.</p>
+        </div>
+        <div class="challenge-item">
+          <h4>Screening Inefficiency</h4>
+          <p>Sales team was wasting hours on low-intent conversations instead of qualified, interested prospects.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ THE SOLUTION ═══════════ -->
+<section class="solution">
+  <div class="container">
+    <div class="page-label page-label-dark">PAGE 03 &mdash; THE SOLUTION</div>
+    <h2 class="section-heading">An End-to-End <span>Recruitment<br>Ecosystem</span></h2>
+    <p class="solution-subtitle">Automate Accelerator delivered a multi-channel, content-first growth system combining strategy, content, automation and human-led outreach.</p>
+
+    <div class="solution-steps">
+      <div class="step-card">
+        <div class="step-icon step-icon-orange">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="step-body">
+          <h4>Centralised CRM &amp; Data Transparency</h4>
+          <p>We provided an all-in-one CRM solution with qualified data points for decision-makers across priority industries, giving andersenIT full visibility into every prospect interaction.</p>
+          <div class="step-pills">
+            <span>Data Automation</span>
+            <span>Reminders &amp; Workflows</span>
+            <span>Form Creation</span>
+            <span>Email &amp; SMS Setup</span>
+          </div>
+        </div>
+        <div class="step-number">01</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-icon step-icon-green">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="step-body">
+          <h4>High-Value Asset Creation</h4>
+          <p>Conversion-focused landing pages, lead magnets branded to andersenIT, and Business Information Packs shared with prospects post-call to reinforce credibility.</p>
+          <div class="step-pills">
+            <span>Industry-Specific Landing Pages</span>
+            <span>Lead Magnets</span>
+            <span>Business Information Packs</span>
+          </div>
+        </div>
+        <div class="step-number">02</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-icon step-icon-teal">
+          <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </div>
+        <div class="step-body">
+          <h4>LinkedIn Authority &amp; Outreach</h4>
+          <p>Profile and business page audits, monthly content calendars with industry-specific IT risks, compliance insights and leadership perspectives.</p>
+          <div class="step-pills">
+            <span>Profile Optimisation</span>
+            <span>Content Engine</span>
+            <span>Connection Strategy</span>
+          </div>
+        </div>
+        <div class="step-number">03</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-icon step-icon-purple">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div class="step-body">
+          <h4>Multi-Channel Outreach (Email + Voice)</h4>
+          <p>Industry-specific email campaigns via Smartlead combined with AI-assisted and human-led voice calling, targeting CIOs, CTOs, IT Directors and Heads of Compliance.</p>
+          <div class="step-pills">
+            <span>Smartlead Campaigns</span>
+            <span>Voice Outreach</span>
+            <span>Follow-Up Sequences</span>
+            <span>BIP Delivery Post-Call</span>
+          </div>
+        </div>
+        <div class="step-number">04</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ EMAIL CAMPAIGN PERFORMANCE ═══════════ -->
+<section class="performance">
+  <div class="container">
+    <div class="page-label page-label-light">PAGE 04 &mdash; EMAIL PERFORMANCE</div>
+    <h2 class="section-heading">Email Campaign <span>Performance</span></h2>
+    <p class="perf-subtitle">The outbound system delivered strong, verifiable outcomes across multiple industry-specific campaigns via the centralised platform.</p>
+
+    <div class="top-metrics">
+      <div class="top-metric-card">
+        <div class="metric-ring metric-ring-orange">
+          <svg viewBox="0 0 56 56"><circle class="metric-ring-bg" cx="28" cy="28" r="24"/><circle class="metric-ring-fill" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="0"/></svg>
+          <div class="metric-ring-icon"><svg viewBox="0 0 24 24" stroke="var(--accent)"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        </div>
+        <div>
+          <div class="metric-label">Total Volume</div>
+          <div class="metric-value">20,000+</div>
+          <div class="metric-sub">Emails Sent</div>
+        </div>
+      </div>
+      <div class="top-metric-card">
+        <div class="metric-ring metric-ring-green">
+          <svg viewBox="0 0 56 56"><circle class="metric-ring-bg" cx="28" cy="28" r="24"/><circle class="metric-ring-fill" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="37.7"/></svg>
+          <div class="metric-ring-icon"><svg viewBox="0 0 24 24" stroke="var(--green)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        </div>
+        <div>
+          <div class="metric-label">Open Consistency</div>
+          <div class="metric-value">47-75%</div>
+          <div class="metric-sub">Open Rate Range</div>
+        </div>
+      </div>
+      <div class="top-metric-card">
+        <div class="metric-ring metric-ring-blue">
+          <svg viewBox="0 0 56 56"><circle class="metric-ring-bg" cx="28" cy="28" r="24"/><circle class="metric-ring-fill" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="120.6"/></svg>
+          <div class="metric-ring-icon"><svg viewBox="0 0 24 24" stroke="var(--blue)"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        </div>
+        <div>
+          <div class="metric-label">Reply Rate</div>
+          <div class="metric-value">2-7%</div>
+          <div class="metric-sub">Qualified Responses</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="breakdown-heading">Role-Specific Breakdown</h3>
+
+    <!-- Healthcare -->
+    <div class="breakdown-card">
+      <div class="breakdown-inner">
+        <div class="breakdown-bar-left bar-blue"></div>
+        <div class="breakdown-content">
+          <div class="breakdown-top">
+            <div class="breakdown-label"><h4>Healthcare &amp; Allied Services</h4></div>
+            <div class="pct-ring">
+              <svg viewBox="0 0 44 44"><circle class="pct-ring-bg" cx="22" cy="22" r="18"/><circle class="pct-ring-fill" cx="22" cy="22" r="18" stroke="var(--blue)" stroke-dasharray="113.1" stroke-dashoffset="28.3"/></svg>
+              <div class="pct-ring-text" style="color:var(--blue)">75%</div>
+            </div>
+          </div>
+          <div class="breakdown-metrics-row">
+            <div class="bd-metric"><div class="bd-val">3,844</div><div class="bd-lbl">Emails Sent</div></div>
+            <div class="bd-metric"><div class="bd-val bd-val-accent">2,743</div><div class="bd-lbl">Opens (75%)</div></div>
+            <div class="bd-metric"><div class="bd-val bd-val-blue">28</div><div class="bd-lbl">Replies</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legal -->
+    <div class="breakdown-card">
+      <div class="breakdown-inner">
+        <div class="breakdown-bar-left bar-purple"></div>
+        <div class="breakdown-content">
+          <div class="breakdown-top">
+            <div class="breakdown-label"><h4>Legal Services</h4></div>
+            <div class="pct-ring">
+              <svg viewBox="0 0 44 44"><circle class="pct-ring-bg" cx="22" cy="22" r="18"/><circle class="pct-ring-fill" cx="22" cy="22" r="18" stroke="var(--purple)" stroke-dasharray="113.1" stroke-dashoffset="59.9"/></svg>
+              <div class="pct-ring-text" style="color:var(--purple)">47%</div>
+            </div>
+          </div>
+          <div class="breakdown-metrics-row">
+            <div class="bd-metric"><div class="bd-val">3,120</div><div class="bd-lbl">Emails Sent</div></div>
+            <div class="bd-metric"><div class="bd-val bd-val-accent">1,821</div><div class="bd-lbl">57.83% Opens</div></div>
+            <div class="bd-metric"><div class="bd-val bd-val-blue">11</div><div class="bd-lbl">Senior Replies</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Construction -->
+    <div class="breakdown-card">
+      <div class="breakdown-inner">
+        <div class="breakdown-bar-left bar-orange"></div>
+        <div class="breakdown-content">
+          <div class="breakdown-top">
+            <div class="breakdown-label"><h4>Construction</h4></div>
+            <div class="pct-ring">
+              <svg viewBox="0 0 44 44"><circle class="pct-ring-bg" cx="22" cy="22" r="18"/><circle class="pct-ring-fill" cx="22" cy="22" r="18" stroke="var(--orange)" stroke-dasharray="113.1" stroke-dashoffset="41.8"/></svg>
+              <div class="pct-ring-text" style="color:var(--orange)">63%</div>
+            </div>
+          </div>
+          <div class="breakdown-metrics-row">
+            <div class="bd-metric"><div class="bd-val">2,268</div><div class="bd-lbl">Emails Sent</div></div>
+            <div class="bd-metric"><div class="bd-val bd-val-accent">1,456</div><div class="bd-lbl">63.33% Opens</div></div>
+            <div class="bd-metric"><div class="bd-val bd-val-green">9</div><div class="bd-lbl">Qualified Replies</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transport -->
+    <div class="breakdown-card">
+      <div class="breakdown-inner">
+        <div class="breakdown-bar-left bar-green"></div>
+        <div class="breakdown-content">
+          <div class="breakdown-top">
+            <div class="breakdown-label"><h4>Transportation &amp; Logistics</h4></div>
+            <div class="pct-ring">
+              <svg viewBox="0 0 44 44"><circle class="pct-ring-bg" cx="22" cy="22" r="18"/><circle class="pct-ring-fill" cx="22" cy="22" r="18" stroke="var(--green)" stroke-dasharray="113.1" stroke-dashoffset="45.2"/></svg>
+              <div class="pct-ring-text" style="color:var(--green)">60%</div>
+            </div>
+          </div>
+          <div class="breakdown-metrics-row">
+            <div class="bd-metric"><div class="bd-val">2,127</div><div class="bd-lbl">Emails Sent</div></div>
+            <div class="bd-metric"><div class="bd-val bd-val-accent">1,325</div><div class="bd-lbl">59.73% Opens</div></div>
+            <div class="bd-metric"><div class="bd-val bd-val-green">6</div><div class="bd-lbl">Qualified Replies</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Follow-up callout -->
+    <div class="followup-card">
+      <div class="followup-icon">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div>
+        <h4>Follow-Up Success</h4>
+        <p>Automated reactivation sequences generated an additional <span>1.3% &ndash; 5% response rate</span> from previously unresponsive leads, proving the value of the new CRM-led follow-up system.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ VOICE OUTREACH ═══════════ -->
+<section class="voice">
+  <div class="container">
+    <div class="page-label page-label-dark">PAGE 05 &mdash; VOICE PERFORMANCE</div>
+    <h2 class="section-heading">Voice Outreach &amp;<br><span>Appointment Metrics</span></h2>
+    <p class="voice-subtitle">To convert warm interest into real conversations, voice calling was layered on top of engaged leads with structured scripts and post-call BIP delivery.</p>
+
+    <div class="voice-stats">
+      <div class="voice-stat">
+        <div class="voice-stat-icon vsi-purple"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <h3>6,623</h3>
+        <p>Total Dials</p>
+      </div>
+      <div class="voice-stat">
+        <div class="voice-stat-icon vsi-green"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h3>1,854</h3>
+        <p>Calls Connected</p>
+      </div>
+      <div class="voice-stat">
+        <div class="voice-stat-icon vsi-orange"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h3>151</h3>
+        <p>Interested Prospects</p>
+      </div>
+      <div class="voice-stat">
+        <div class="voice-stat-icon vsi-blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h3>208</h3>
+        <p>Appointments Booked</p>
+      </div>
+    </div>
+
+    <div class="metric-banner">
+      <h3>11% Appointment Rate</h3>
+      <p>Of all meaningful connections, 11% progressed to confirmed meetings, reflecting the quality of pre-call warming through email and content engagement.</p>
+    </div>
+
+    <div class="voice-cards">
+      <div class="voice-card">
+        <h4>Campaign Period</h4>
+        <p>Multi-month outbound engagement covering six priority industries, with campaigns running continuously and refined through performance data across Q3-Q4 2024.</p>
+      </div>
+      <div class="voice-card">
+        <h4>Connection Quality</h4>
+        <p>All conversations were high-intent in nature, enabling andersenIT's sales team to focus on qualified, relevant conversations rather than cold discovery calls.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ WHAT MADE THIS WORK ═══════════ -->
+<section class="success">
+  <div class="container">
+    <div class="success-header">
+      <div class="page-label page-label-light">PAGE 06</div>
+      <h2 class="section-heading">What Made <span>This Work</span></h2>
+      <p>The 3 Pillars of Success</p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar-card">
+        <div class="pillar-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div>
+        <h4>Unified Data Core</h4>
+        <p>Every message was written for a real decision-maker with a real operational risk, segmented by industry and buying authority.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-card-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+        <h4>Content-Led Assets</h4>
+        <p>Prospects were educated and warmed before human outreach, changing conversations from cold pitch to consultative dialogue.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <h4>Human Integration</h4>
+        <p>Email, LinkedIn, landing pages and calling worked as one ecosystem with human-led voice outreach layered on intent signals.</p>
+      </div>
+    </div>
+
+    <div class="fw-grid">
+      <div class="fw-card">
+        <h3>Scalable Outbound Framework</h3>
+        <p class="fw-sub">andersenIT now has a scalable outbound framework that:</p>
+        <ul class="checklist">
+          <li><div class="check-dot"><svg viewBox="0 0 12 12"><path d="M10 3L4.5 8.5 2 6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Can be trusted across multiple medical specialties and geographic markets</li>
+          <li><div class="check-dot"><svg viewBox="0 0 12 12"><path d="M10 3L4.5 8.5 2 6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Produces consistent flow of engaged, qualified conversations</li>
+          <li><div class="check-dot"><svg viewBox="0 0 12 12"><path d="M10 3L4.5 8.5 2 6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Positions andersenIT as the trusted partner, not a vendor</li>
+          <li><div class="check-dot"><svg viewBox="0 0 12 12"><path d="M10 3L4.5 8.5 2 6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Reduces sales friction and eliminates wasted effort</li>
+          <li><div class="check-dot"><svg viewBox="0 0 12 12"><path d="M10 3L4.5 8.5 2 6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Gives full transparency and real-time client control</li>
+        </ul>
+      </div>
+      <div class="impact-card">
+        <h3>Client Impact</h3>
+        <p class="impact-sub">andersenIT now has a scalable outbound framework. We helped them build a strong digital presence, centralised their global data for easy management, and created a consistent flow of qualified conversations.</p>
+        <div class="impact-stats">
+          <div class="impact-stat"><h4>300K+</h4><p>Total Reach</p></div>
+          <div class="impact-stat"><h4>30K+</h4><p>Data Points</p></div>
+          <div class="impact-stat"><h4>208</h4><p>Follow-Ups</p></div>
+          <div class="impact-stat"><h4>13</h4><p>Active Campaigns</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Ready to Build Your Own Growth System?</h2>
+    <p>Discover how Automate Accelerator can help transform your outbound and drive qualified conversations at scale.</p>
+    <a href="https://automateaccelerator.com" class="cta-btn">
+      Visit AutomateAccelerator.com
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg>
+    </a>
+    <div class="cta-logos-text">
+      <span class="cta-brand">Automate Accelerator</span>
+      <div class="cta-brand-divider"></div>
+      <span class="cta-brand">andersenIT</span>
+    </div>
+    <p class="cta-tagline">A successful partnership in IT revenue excellence</p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 Automate Accelerator &mdash; Content-Led Growth Systems for B2B Services</p>
+  </div>
+</footer>
+
+</body>
+</html>

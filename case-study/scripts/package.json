@@ -1,0 +1,9 @@
+{
+  "name": "case-study-skill-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PDF export for case study skill",
+  "dependencies": {
+    "puppeteer": "^23.0.0"
+  }
+}
