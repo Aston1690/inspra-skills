@@ -1,13 +1,33 @@
 ---
 name: bip
-description: "Generate professional Business Information Pack (BIP) documents as 16:9 landscape PDF slide decks. Use this skill when the user wants to create a BIP, business information pack, company overview deck, sales pitch deck, business intro slides, or professional company presentation. Also trigger when the user provides a website URL, brand discovery doc, or content document and asks for a business overview, company profile, pitch deck, or sales enablement slides. Handles the full pipeline: brand extraction, content sourcing, FLUX image generation, HTML slide build, and Puppeteer PDF export."
+description: "Generate professional Business Information Pack (BIP) documents as 16:9 landscape PDF slide decks. Use this skill when the user wants to create a BIP, business information pack, company overview deck, sales pitch deck, business intro slides, or professional company presentation. Also trigger when the user provides a website URL, brand discovery doc, or content document and asks for a business overview, company profile, pitch deck, or sales enablement slides. Handles the full pipeline: brand extraction, content mapping, content sourcing, image generation, HTML slide build, Puppeteer PDF export, and multi-point QA verification."
 ---
 
-# BIP Skill — Business Information Pack Generator (v4)
+# BIP Skill — Business Information Pack Generator (v5)
 
 > Modern, editorial-quality Business Information Packs as 16:9 landscape PDF slide decks.
 > Design philosophy: minimal, typography-driven, spacious — not generic corporate templates.
 > Branding is ALWAYS from the CLIENT'S OWN BRAND. Never apply another brand's colors to a client BIP.
+
+---
+
+## CONTENT RULES (CRITICAL — READ FIRST)
+
+**The source document is the ONLY source of truth for content.**
+
+1. **NEVER miss content** — every section, paragraph, stat, quote, and bullet point from the source document MUST appear in the output
+2. **NEVER alter content** — do not reword headlines, taglines, quotes, or section headings. Use the exact text provided
+3. **NEVER invent content** — do not create stats, testimonials, phone numbers, emails, team bios, or copy that doesn't exist in the source
+4. **If the source has more content than 9 slides** — ADD slides. Never drop content to fit the template
+5. **Use placeholders** for genuinely missing data: `[PHONE]`, `[TESTIMONIAL NEEDED]`, `[EMAIL]`
+
+### Content Mapping (MANDATORY STEP)
+
+Before writing any HTML, create a content map:
+1. List every section/topic from the source document
+2. Map each source section to a specific slide
+3. Verify NO source content is unmapped
+4. If content doesn't fit 9 slides, add more slides using the design system's alternating dark/light pattern
 
 ---
 
@@ -17,19 +37,10 @@ description: "Generate professional Business Information Pack (BIP) documents as
 
 | Skill | Step | Purpose |
 |-------|------|---------|
-| **`brand-guide-extractor`** | Step 0 | Extract client's logo, colours, fonts, and visual tone from their website. PRIMARY method for brand discovery. |
-| **`copywriting`** | Step 3 | Write slide content with strategic, benefit-focused language. |
-| **`taste-frontend`** | Step 5 (after first HTML draft) | Audit the slide design against premium standards. |
-| **`polish`** | Step 6 (after screenshots) | Final quality pass on spacing, alignment, and micro-details. |
-
-### How to Invoke Skills
-
-```
-Skill("brand-guide-extractor", "https://www.clientwebsite.com")
-Skill("copywriting", "Write BIP slide content for [client]. Tone: confident, warm, benefit-focused...")
-Skill("taste-frontend", "Audit this BIP slide deck for premium design quality...")
-Skill("polish", "Final pass on the BIP slides...")
-```
+| **`brand-guide-extractor`** | Step 0 | Extract client's logo, colours, fonts, and visual tone from their website |
+| **`copywriting`** | Step 3 | Write slide content with strategic, benefit-focused language |
+| **`taste-frontend`** | Step 5 (after first HTML draft) | Audit the slide design against premium standards |
+| **`polish`** | Step 6 (after screenshots) | Final quality pass on spacing, alignment, and micro-details |
 
 ---
 
@@ -41,6 +52,7 @@ Skill("polish", "Final pass on the BIP slides...")
 | Content Document | Google Doc, PDF, or markdown | Primary content source |
 | Brand Guide | File or inline text | Use if provided |
 | Client Name | Extracted from sources | Required |
+| Client photos/headshots | User-provided | Use if provided — never crop from screenshots |
 
 ---
 
@@ -57,7 +69,7 @@ Skill("polish", "Final pass on the BIP slides...")
    - NEVER invent content when a source document exists
 
 3. **"Are there any specific images, team photos, or visuals you'd like to include?"**
-   - If yes, use their images
+   - If yes, use their images directly — never try to crop or extract from screenshots
    - If not, use FLUX to generate or source from Unsplash
 
 **Only proceed to Step 0 after getting answers.**
@@ -96,14 +108,12 @@ Read it and extract the relevant tokens. Skip `brand-guide-extractor` for anythi
 
 **CRITICAL: Test every logo on both dark and light backgrounds.**
 
-- Dark text logo on dark slide: add `filter: brightness(0) invert(1)` 
+- Dark text logo on dark slide: add `filter: brightness(0) invert(1)`
 - White text logo on light slide: add `filter: brightness(0)`
 - If a logo doesn't render cleanly, use text instead
 - **NEVER use the SVG from automateaccelerator.com** — it has broken `display:none` layers. Use PNG versions.
 
 ### Brand Mapping Rules
-
-Map extracted values to the BIP design system:
 
 | BIP Token | Source | Notes |
 |-----------|--------|-------|
@@ -114,19 +124,6 @@ Map extracted values to the BIP design system:
 | `--text-on-light` | `#1a1a1e` or client's dark text | Body on light slides |
 | `--text-muted` | `rgba(255,255,255,0.6)` on dark, `#8b8b96` on light | Secondary text |
 | `--font` | Client's headline font or `Poppins` as fallback | Load via Google Fonts |
-
-### Brand Extraction Output
-
-```
-BRAND TOKENS — [Client Name]
-──────────────────────────────
-BG_DARK:    #______
-BG_LIGHT:   #______
-ACCENT:     #______
-FONT:       ______
-LOGO:       [path] (verified on dark + light bg)
-TONE:       [3 descriptors]
-```
 
 ---
 
@@ -142,9 +139,23 @@ Read it. Use it as the SOLE source of truth. Do NOT invent content.
 
 ---
 
-## STEP 2 — CONTENT MAPPING
+## STEP 2 — CONTENT MAPPING (MANDATORY)
 
-Map extracted content to the 9 slides. Use placeholders for anything missing.
+Map ALL extracted content to slides. **Every piece of source content must be assigned to a slide.**
+
+Create this map before writing any HTML:
+
+```
+SOURCE CONTENT → SLIDE MAPPING
+─────────────────────────────────
+Source Section 1: [title] → Slide [N]: [name]
+Source Section 2: [title] → Slide [N]: [name]
+...
+UNMAPPED CONTENT: [list anything not yet assigned]
+ACTION: [add slides for unmapped content]
+```
+
+**If any source content is unmapped, add more slides. Never drop content.**
 
 ---
 
@@ -163,7 +174,7 @@ Skill("copywriting", "Write BIP slide content for [CLIENT]. Tone: confident, war
 - Body copy: conversational, confident, warm — not corporate/stiff
 - Forbidden: "unlock", "revolutionise", "seamless", "game-changing", "synergy", "leverage"
 - Match the client's regional spelling (Australian English unless specified)
-- Only include content from source documents
+- **Only include content from source documents — never invent**
 - Placeholders for missing data: `[PHONE]`, `[TESTIMONIAL NEEDED]`, `[PARTNER LOGOS]`
 
 ---
@@ -183,6 +194,13 @@ python ~/.claude/skills/bip/scripts/generate_images.py \
 ```
 
 If FLUX fails, use Unsplash stock images or CSS gradient fallbacks with `.no-image` class.
+
+### Image Rules (CRITICAL)
+- **Every image MUST be a DIFFERENT photo** — never reuse the same URL across slides
+- **No Black people in stock photos** — client preference, check every image visually
+- **Verify every image URL returns HTTP 200** before exporting: `curl -s -o /dev/null -w "%{http_code}" URL`
+- **If user provides photos, use them directly** — never crop from screenshots or low-res sources
+- If an image URL returns non-200, replace immediately before proceeding
 
 ### Image Keys
 
@@ -211,7 +229,7 @@ The BIP should feel like a premium keynote presentation — NOT a generic dark c
 **Core principles:**
 - **Typography is the design** — large type, creative weight mixing, dramatic scale contrast
 - **Whitespace is a feature** — let content breathe, don't fill every pixel
-- **Alternating dark/light slides** — creates visual rhythm (dark cover, light about, dark services, etc.)
+- **Alternating dark/light slides** — creates visual rhythm
 - **No card borders on light slides** — use spacing and typography for hierarchy
 - **Images fill space** — no small thumbnails, use full-bleed or large panels
 - **Font weight: 500-600 max** — no bold (700+) fonts. Medium weight only for a refined feel.
@@ -242,7 +260,7 @@ The BIP should feel like a premium keynote presentation — NOT a generic dark c
 }
 ```
 
-### Typography Scale (Poppins or client font)
+### Typography Scale
 
 | Element | Size | Weight | Notes |
 |---------|------|--------|-------|
@@ -270,11 +288,20 @@ The BIP should feel like a premium keynote presentation — NOT a generic dark c
 ### Card & Component Rules
 
 - **Dark slide cards:** `background: rgba(255,255,255,0.05)`, `border: 1px solid rgba(255,255,255,0.08)`, `border-radius: 16px`
-- **Light slide elements:** NO card borders — use spacing, thin divider lines (`1px solid rgba(0,0,0,0.06)`), and typography hierarchy
+- **Light slide elements:** NO card borders — use spacing, thin divider lines, typography hierarchy
 - **Images:** `border-radius: 16px`, `object-fit: cover`
 - **Logo:** Cover = top-left 60px height. Other slides = bottom-right 40px height, 80% opacity
-- **Accent divider:** thin line in accent colour, used sparingly between sections
+- **Accent divider:** thin line in accent colour, used sparingly
 - **Stat numbers:** accent coloured, weight 600, tight letter-spacing (-0.03em)
+
+### Split Layout Pattern (Cover, Partners, Contact)
+
+```css
+.slide { display: flex; align-items: stretch; padding: 0; }
+.slide .text { flex: 1; padding: 80px 60px 80px 100px; display: flex; flex-direction: column; justify-content: center; }
+.slide .image { width: 42%; }
+.slide .image img { width: 100%; height: 100%; object-fit: cover; border-radius: 24px 0 0 24px; }
+```
 
 ### After HTML is built, run `taste-frontend`:
 
@@ -284,49 +311,7 @@ Skill("taste-frontend", "Audit this BIP slide deck for premium quality. Check: t
 
 ---
 
-## STEP 6 — PREVIEW AND VERIFY
-
-**MANDATORY: Screenshot every slide before exporting.**
-
-```bash
-# Start preview server
-npx -y serve "$OUTPUT_DIR" -l 3460 --no-clipboard &
-sleep 2
-
-# Full-page screenshot
-npx -y playwright screenshot --full-page --viewport-size="1920,1080" "http://localhost:3460" "$OUTPUT_DIR/preview.png"
-
-# Kill server
-kill $(lsof -ti:3460) 2>/dev/null
-```
-
-**Visually verify:**
-- [ ] Client logo visible on cover (correct version for dark bg)
-- [ ] Logo visible on all other slides (correct version per bg colour)
-- [ ] Brand colours match client's actual website
-- [ ] Slides alternate dark/light correctly
-- [ ] Images render (no broken images or blank spaces)
-- [ ] Font weights are 600 max (no heavy bold)
-- [ ] Stat numbers are accent-coloured
-- [ ] Generous whitespace on every slide
-- [ ] Body text is readable (18-20px, good contrast)
-
-### Run `polish` for final refinement:
-
-```
-Skill("polish", "Final quality pass on BIP slides. Check: alignment, spacing, font consistency, colour accuracy, image quality.")
-```
-
----
-
-## STEP 7 — EXPORT TO PDF
-
-```bash
-cd output/bip-work
-node export-pdf.js bip.html "[client-name]-bip-v1.pdf"
-```
-
-### Puppeteer Export Script
+## STEP 6 — EXPORT TO PDF
 
 ```javascript
 const puppeteer = require('puppeteer');
@@ -350,7 +335,7 @@ const path = require('path');
   });
   await new Promise(r => setTimeout(r, 2000));
   await page.pdf({
-    path: path.join(__dirname, '..', process.argv[3] || 'bip.pdf'),
+    path: path.join(__dirname, '..', '[client-name]-bip-v1.pdf'),
     width: '1920px',
     height: '1080px',
     printBackground: true,
@@ -363,24 +348,102 @@ const path = require('path');
 
 ---
 
-## STEP 8 — DELIVER
+## STEP 7 — QA VERIFICATION (MANDATORY BEFORE DELIVERY)
 
-Present the user with:
-1. **Preview screenshot** of the cover slide
-2. **PDF file path**
-3. **Logo status** — confirm both dark and light versions render correctly
-4. **Content source** — confirm all content came from their document
-5. **Slide summary** — confirm all 9 slides are present
+**You MUST complete ALL QA checks before opening the PDF for the user. No exceptions.**
+
+### 7a. Verify All Image URLs
+
+```bash
+# Extract all image URLs from the HTML and verify each returns HTTP 200
+# If any return non-200, replace immediately and re-export
+```
+
+### 7b. Slide-by-Slide Screenshot Review
+
+```javascript
+// Screenshot EVERY slide individually and READ each one
+const slides = await page.$$('.slide');
+for (let i = 0; i < slides.length; i++) {
+  await slides[i].screenshot({ path: `qa-slide-${i+1}.png`, type: 'png' });
+}
+```
+
+**Read EVERY screenshot with the Read tool.** Check each slide for:
+- Images loading correctly (no broken icons, no alt text visible)
+- No Black people in stock photos
+- Logo visible and correct version for background colour
+- Text readable and properly styled
+- No content overflow or clipping
+- Headshots/photos clean (no artefacts, no dark backgrounds bleeding through)
+- Font weights are 600 max
+- Stat numbers are accent-coloured
+- Generous whitespace
+
+### 7c. Content Audit
+
+Compare EVERY piece of content from the source document against the HTML output:
+- Is ALL source content present in the slides?
+- Was any content changed, reworded, or summarised?
+- Was anything invented that wasn't in the source?
+- Are quotes using the exact original text?
+- Are contact details, phone numbers, emails from the source (not invented)?
+- Are stats and metrics from the source (not invented)?
+
+### 7d. Layout & Design Checks
+
+- [ ] Slides alternate dark/light correctly
+- [ ] Brand colours match client's actual website
+- [ ] No negative spacing or overlapping elements
+- [ ] All images unique (no duplicates across slides)
+- [ ] Split layouts have image bleeding to edge (no gap)
+- [ ] Body text minimum 18-20px (readable at 1920px)
+
+### 7e. Run `polish` Skill
+
+```
+Skill("polish", "Final quality pass on BIP slides. Check: alignment, spacing, font consistency, colour accuracy, image quality.")
+```
+
+### QA Pass/Fail Checklist
+
+**Only deliver the PDF when ALL items pass:**
+
+- [ ] All image URLs return HTTP 200
+- [ ] Every slide screenshot reviewed — no visual issues
+- [ ] No Black people in any stock photos
+- [ ] No broken images or alt text showing
+- [ ] All source content is present and unaltered
+- [ ] No invented content (stats, quotes, contact details, copy)
+- [ ] Quotes match source text exactly
+- [ ] Contact details match source exactly (or use placeholders)
+- [ ] Logo visible on every slide (correct variant per bg)
+- [ ] Brand colours match client website
+- [ ] Slides alternate dark/light
+- [ ] Font weight 600 max throughout
+- [ ] Every image is unique across slides
+- [ ] Headshots/photos are clean (user-provided, not cropped from screenshots)
+- [ ] PDF exports at 1920x1080 per slide
 
 ---
 
-## SLIDE STRUCTURE (9 slides, alternating dark/light)
+## STEP 8 — DELIVER
+
+Present the user with:
+1. **Preview screenshots** of key slides (cover, services, contact at minimum)
+2. **PDF file path**
+3. **Logo status** — confirm both dark and light versions render correctly
+4. **Content source** — confirm all content came from their document
+5. **Slide summary** — confirm all slides are present and list what's on each
+6. **QA status** — confirm all checks passed
+
+---
+
+## SLIDE STRUCTURE (9 slides minimum, alternating dark/light)
 
 ### Slide 1: Cover (DARK) — Split Layout
 
 **Layout:** Two-panel split — text left (58%), image right (42%). Image bleeds to the right edge with `border-radius: 24px 0 0 24px`. Logo top-left in the text area. Massive headline (80-92px, weight 600). Accent-coloured keyword. Tagline below (22-28px, muted). Thin accent divider. Website URL bottom-left.
-
-**IMPORTANT: This split layout (text left, full-bleed image right) is the signature BIP pattern. Use it for Cover, Partners/Trust, and Contact slides.**
 
 ### Slide 2: About / Company Introduction (LIGHT)
 
@@ -404,19 +467,15 @@ Present the user with:
 
 ### Slide 7: Testimonials (LIGHT)
 
-**Layout:** Warm cream background. Large headline. Intro sentence. 2-3 testimonial quotes — large italic text with attribution. Use real quotes only. Logo bottom-right.
+**Layout:** Warm cream background. Large headline. Intro sentence. 2-3 testimonial quotes — large italic text with attribution. **Use real quotes from source only.** Logo bottom-right.
 
 ### Slide 8: Partners / Trust (DARK) — Split Layout
 
-**Layout:** Split layout (same as Cover) — text left (55%), image right (45%) bleeding to edge. Heading + description on left. Image fills right with `border-radius: 24px 0 0 24px`. City names listed below text with accent dot separators. Logo bottom-right in text area.
-
-**NO padding on right side** — image must touch the right edge of the slide.
+**Layout:** Split layout — text left (55%), image right (45%) bleeding to edge. Heading + description on left. Image fills right with `border-radius: 24px 0 0 24px`. Logo bottom-right in text area.
 
 ### Slide 9: Contact (LIGHT) — Split Layout
 
-**Layout:** Light/cream background. Split layout — text left (58%), full-bleed image right (42%). Logo top-left (dark version for light bg). Large CTA headline. Subtitle. Thin accent divider. Contact details (website, email, phone) in a horizontal row. CTA line at bottom in accent. Image bleeds to right edge.
-
-**This mirrors the Cover slide but inverted — light bg instead of dark, dark logo instead of light.**
+**Layout:** Light/cream background. Split layout — text left (58%), full-bleed image right (42%). Logo top-left (dark version for light bg). Large CTA headline. Contact details. **Use exact contact details from source — never invent.**
 
 ---
 
@@ -429,47 +488,26 @@ Present the user with:
 | Logo invisible on dark slide | Use white version or `filter: brightness(0) invert(1)` |
 | Logo invisible on light slide | Use dark version or `filter: brightness(0)` |
 | SVG renders blank | Download PNG instead, or use text fallback |
-| Logo renders HUGE / distorted | ALWAYS set `height`, `width:auto`, AND `max-width` on logo `<img>` tags. CSS class alone is not enough — use inline `style="height:50px; width:auto; max-width:200px;"` |
+| Logo renders HUGE / distorted | Set `height`, `width:auto`, AND `max-width` on `<img>` tags |
 
 ### Image Issues
 
 | Problem | Fix |
 |---------|-----|
 | FLUX generation failed | Use Unsplash stock images matching industry |
+| Image URL returns non-200 | Find alternative URL, verify with curl before using |
 | Image too dark on dark slide | Add lighter overlay gradient |
-| Image missing | Add `.no-image` class for CSS gradient fallback |
-| Image floats with gap beside text | Use split layout: `display:flex; align-items:stretch; padding:0;` on the slide, text in a padded flex child, image in a `width:42-45%` div with `height:100%; object-fit:cover;` |
+| User provided a photo | Use it directly — NEVER crop from screenshots |
+| Image shows Black people | Replace with alternative stock image |
 
 ### Layout Issues
 
 | Problem | Fix |
 |---------|-----|
-| Text and image not aligned side by side | Use `display:flex; align-items:stretch;` on the slide div. Remove `padding:0` from the slide, put padding only on the text side. Image div gets `width:42-45%` with image at `100%` width and height |
-| Content overflows slide bottom | Reduce heading size or remove `justify-content:center` — let content flow naturally from top |
-| Blank space on slides | Slides are 1080px fixed height — if content is short, use `justify-content:center` on the padded content div to vertically centre it |
-
-### Font Issues
-
-| Problem | Fix |
-|---------|-----|
-| Client font not on Google Fonts | Fall back to Poppins |
-| Font looks too heavy | Ensure max weight is 600, never 700+ |
-| Font sizes too small for 1920px slides | Minimum sizes: headlines 56-92px, subheads 26-34px, body 20-24px, labels 14-16px. The slide is 1920px wide — desktop web sizes will look tiny |
-
-### Split Layout Pattern (Cover, Partners, Contact)
-
-The signature BIP layout for slides with images:
-```css
-/* Slide container */
-.slide { display: flex; align-items: stretch; padding: 0; }
-
-/* Text side */
-.slide .text { flex: 1; padding: 80px 60px 80px 100px; display: flex; flex-direction: column; justify-content: center; }
-
-/* Image side — bleeds to edge */
-.slide .image { width: 42%; }
-.slide .image img { width: 100%; height: 100%; object-fit: cover; border-radius: 24px 0 0 24px; }
-```
+| Text and image not aligned | Use `display:flex; align-items:stretch;` on the slide |
+| Content overflows slide | Reduce heading size or let content flow from top |
+| Blank space on slides | Use `justify-content:center` to vertically centre |
+| Split layout has gap on right | Remove padding from image side, set `width:42-45%` with `height:100%; object-fit:cover` |
 
 ---
 
@@ -479,18 +517,22 @@ The signature BIP layout for slides with images:
 - **BIP uses CLIENT branding** — not Automate Accelerator
 - **Font weight 600 max** — no bold (700+) fonts
 - **Ask user 3 questions before starting** (brand guide, content doc, images)
+- **All source content must be present** — never skip sections to fit 9 slides
+- **Never alter CTAs, quotes, or headlines** from what the source provides
+- **Never invent content** — no fabricated stats, testimonials, contact details, or copy
+- **No Black people in stock photos** — client preference
+- **Every image must be unique** — never reuse the same URL across slides
+- **Verify all image URLs** return HTTP 200 before export
+- **If user provides photos, use them directly** — never crop from screenshots
+- **Full QA verification mandatory** — slide-by-slide screenshots + content audit before delivery
 - Run `brand-guide-extractor` before extracting brand manually
 - Run `copywriting` for slide content
 - Run `taste-frontend` after HTML draft
 - Run `polish` after screenshots
-- ONLY include the 9 slides defined
-- ALWAYS follow the slide order
-- NEVER invent metrics, testimonials, phone numbers, or emails
-- Use placeholders for missing data
 - ALWAYS alternate dark/light slide backgrounds
 - ALWAYS use Poppins as fallback font
 - Output MUST be PDF in 16:9 landscape (1920x1080px)
 
 ---
 
-*BIP Skill | v4.0 | Modern Editorial Design, Client-Branded, Skill-Integrated, Poppins Typography*
+*BIP Skill | v5.0 | Content-Faithful, Full QA Pipeline, Image Verified, Modern Editorial Design*
