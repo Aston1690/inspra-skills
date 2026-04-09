@@ -2,13 +2,24 @@
 
 Claude Code skills for generating premium business documents.
 
-## One-Line Install
+## Install
 
+**Case Study only:**
+```bash
+curl -sL https://raw.githubusercontent.com/Aston1690/inspra-skills/main/install-case-study.sh | bash
+```
+
+**BIP only:**
+```bash
+curl -sL https://raw.githubusercontent.com/Aston1690/inspra-skills/main/install-bip.sh | bash
+```
+
+**Both:**
 ```bash
 curl -sL https://raw.githubusercontent.com/Aston1690/inspra-skills/main/install.sh | bash
 ```
 
-This installs both skills to `~/.claude/skills/`.
+Skills install to `~/.claude/skills/`.
 
 ## Skills
 
