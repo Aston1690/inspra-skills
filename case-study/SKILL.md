@@ -1,68 +1,54 @@
 ---
 name: case-study
-description: >
-  Generate a professional, branded case study webpage from any company website URL.
-  Use this skill whenever the user asks to create, build, design, or generate a case study,
-  client story, success story, or customer showcase. Also trigger when the user mentions
-  "case study" alongside words like "create", "build", "make", "design", or "generate".
-  This skill handles the full workflow: brand extraction from the target website, content
-  research, professional HTML generation with responsive design, and PDF export via Puppeteer.
-  Do NOT trigger for: blog posts, landing pages, newsletters, pitch decks, or non-case-study content.
+description: "Generate a professional, branded case study webpage from any company website URL. Use this skill whenever the user wants to create a case study, client success story, project results document, campaign performance report, or any results-focused PDF showcasing work done for a client. Also trigger when the user provides stats, metrics, campaign results, or a content document and asks for a case study, success story, results deck, or client showcase. Handles the full pipeline: brand extraction, content mapping, HTML build, Puppeteer single-page PDF export, and multi-point QA verification."
 ---
 
-# Case Study Generator Skill (v3)
+# Case Study Skill — Client Success Story Generator v4
 
-You are a Senior Content Designer creating **premium, agency-quality case studies** using brand-matched HTML templates and Puppeteer PDF export. The output must match the quality of a top-tier design agency — alternating dark/light sections, circular data visualizations, colour-coded breakdowns, dual branding, and polished typography.
+> This skill generates a premium, editorial-style Case Study as a long-scroll webpage exported to a single-page PDF.
+> **Design reference: the BGES case study** at `/Users/akhilaston/Desktop/Inspra/C_Hub/case-study-skill/output/bges-case-study/v2.html`
+> **ALWAYS read that file first** to get the exact CSS, HTML structure, and design tokens before writing any code.
+> Branding is ALWAYS from Automate Accelerator (the presenting company).
 
-**IMPORTANT:** The case study is ALWAYS branded as an **Automate Accelerator** deliverable showcasing the client's engagement. The design system, accent colour, and overall identity come from Automate Accelerator (`#ff6900` orange accent), NOT from the client's brand. Client branding (logo, name) appears as the "featured client" alongside the Automate Accelerator identity.
+---
 
-## Skills Used in This Workflow
+## CANONICAL TEMPLATE (CRITICAL)
 
-This skill orchestrates multiple Claude Code skills. **You MUST invoke these skills at the specified steps — do not skip them.**
+**Before writing ANY HTML, you MUST read the template file:**
 
-| Skill | Step | Purpose |
-|-------|------|---------|
-| **`brand-guide-extractor`** | Step 0 | Extract client's logo URLs, colours, fonts, and brand assets from their website. This is the PRIMARY method for logo discovery and brand research. |
-| **`taste-frontend`** | Step 3 (before coding) | Audit the generated HTML against premium design standards. Ensures the output doesn't look like a generic template. |
-| **`soft-visual-design`** | Step 3 (alternative to taste-frontend) | Establish visual design system rules if taste-frontend is unavailable. |
-| **`copywriting`** | Step 2 | Write case study content (challenge narratives, solution descriptions, CTA copy) with strategic, non-fluffy language. |
-| **`playwright-cli`** | Step 4 | Automate browser screenshots for visual verification. |
-| **`polish`** | Step 4 (after first draft) | Final quality pass on spacing, alignment, consistency, and micro-details. |
-
-### How to Invoke Skills
-
-When you reach a step that requires a skill, invoke it using the Skill tool:
 ```
-Skill("brand-guide-extractor", "https://www.clientwebsite.com")
-Skill("taste-frontend", "Audit this case study HTML for premium quality...")
-Skill("copywriting", "Write the challenge section for [client]...")
-Skill("polish", "Final pass on the case study HTML...")
+/Users/akhilaston/Desktop/Inspra/C_Hub/case-study-skill/output/bges-case-study/v2.html
 ```
 
-## Prerequisites
+This is the single source of truth for:
+- CSS variables, fonts, spacing, colors
+- Component patterns (timeline, stats, pillars, etc.)
+- Typography scale and weights
+- Responsive breakpoints
 
-This skill requires:
-1. **Node.js** (v18+) installed
-2. **Puppeteer** — install dependencies by running:
-   ```bash
-   SKILL_DIR=$(dirname "$(find ~/.claude -path "*/case-study/SKILL.md" 2>/dev/null | head -1)")
-   cd "$SKILL_DIR/scripts" && npm install
-   ```
+**Copy the CSS verbatim from the template.** Only change the content — never the design system.
 
-### Auto-Setup (run at start of every session)
+**CSS Fix Required:** Add `line-height: 1.15` to `.highlight-big` — the template's body line-height (1.8) is too loose for this element.
 
-**ALWAYS run this block before any design work.**
+---
 
-```bash
-SKILL_DIR=$(dirname "$(find ~/.claude -path "*/case-study/SKILL.md" 2>/dev/null | head -1)")
+## CONTENT RULES (CRITICAL — READ FIRST)
 
-if [ ! -d "$SKILL_DIR/scripts/node_modules" ]; then
-  echo "Installing Puppeteer dependencies..."
-  cd "$SKILL_DIR/scripts" && npm install
-fi
+**The source document is the ONLY source of truth for content.**
 
-echo "Case Study skill ready."
-```
+1. **NEVER miss content** — every section, paragraph, stat, quote, and bullet point from the source document MUST appear in the output
+2. **NEVER alter content** — do not reword headlines, CTAs, quotes, or section headings. Use the exact text provided
+3. **NEVER invent content** — do not create stats, table data, descriptions, or copy that doesn't exist in the source
+4. **If the source has more sections than the template** — ADD sections to the template. Never drop content to fit a template
+5. **Use placeholders** for genuinely missing data: `[METRIC]`, `[CLIENT TESTIMONIAL NEEDED]`
+
+### Content Mapping (MANDATORY STEP)
+
+Before writing any HTML, create a content map:
+1. List every section/page from the source document
+2. Map each source section to an output section
+3. Verify NO source content is unmapped
+4. If content doesn't fit existing template sections, create new sections using the template's design patterns
 
 ---
 
@@ -70,478 +56,258 @@ echo "Case Study skill ready."
 
 | Input | Source | Required? |
 |-------|--------|-----------|
-| Website URL | User-provided | Required |
-| Company/Product Name | Extracted from URL or user-provided | Required |
-| Content Document | Google Doc, PDF, markdown, or pasted text | Optional (enhances depth) |
-| Hero Image | User-provided or sourced from website | Optional |
-| Target Audience | User-provided | Optional |
-| Specific Metrics | User-provided or researched | Optional |
+| Client Website URL | User-provided | Strongly recommended |
+| Content Document | PDF, doc, markdown, or inline text | Primary content source |
+| Client Name | Extracted from sources | Required |
+| Client headshot/photo | User-provided or from website | If testimonial exists |
 
 ---
 
-## STEP 0 — LOGO & BRAND ASSET COLLECTION (MANDATORY FIRST STEP)
+## BRANDING RULES
 
-**This is the #1 source of bugs. Follow this process exactly.**
+**The case study is ALWAYS branded as Automate Accelerator.**
 
-### 0a. Run `brand-guide-extractor` on the Client Website
-
-**ALWAYS run this skill FIRST.** It extracts logos, colours, fonts, and brand assets properly.
-
-```
-Skill("brand-guide-extractor", "https://www.clientwebsite.com")
-```
-
-This gives you:
-- Client logo URL(s) — light and dark variants if available
-- Primary/secondary brand colours (for reference, NOT for the design system)
-- Font names
-- Screenshots of the client's site
-- Tagline and key messaging
-
-### 0b. Agency Logo (Automate Accelerator)
-
-**IMPORTANT: Use the PNG version (`AA-logo-white.png`), NOT the SVG. The SVG from the website has broken `display:none` layers and does not render correctly.**
-
-The agency logo MUST be sourced in this priority order:
-
-1. **Check local brand-assets first (PNG preferred):**
-   ```bash
-   # Look for existing AA logos — prefer PNG over SVG
-   find "$(pwd)" -maxdepth 5 -iname "AA-logo-white.png" 2>/dev/null | head -5
-   find "$(pwd)/brand-assets/logos" -iname "AA-logo*" 2>/dev/null | head -5
-   ```
-   The correct file is `brand-assets/logos/AA-logo-white.png` (666x174, white text + orange accents on transparent bg).
-   Also available: `AA-logo-dark.png` (dark text version for light backgrounds).
-
-2. **If found locally**, copy it to the output directory as `agency-logo.png`.
-3. **If NOT found locally**, check the Diagram-Skill package:
-   ```bash
-   find "$(pwd)/../" -maxdepth 5 -iname "AA-logo-white.png" 2>/dev/null | head -5
-   ```
-4. **NEVER use `AA-logo-white.svg`** — it has rendering bugs (display:none layers, broken at small sizes).
-
-### 0c. Client Logo
-
-1. **Check local brand-assets first:**
-   ```bash
-   find "$(pwd)/brand-assets" -iname "*[CLIENT_NAME]*" 2>/dev/null | head -10
-   ```
-2. **If found locally**, copy it to the output directory.
-3. **If NOT found locally**, use the logo URL from `brand-guide-extractor` output:
-   ```bash
-   curl -sL "[CLIENT_LOGO_URL_FROM_BRAND_EXTRACTOR]" -o "$OUTPUT_DIR/client-logo.png"
-   ```
-4. **If brand-guide-extractor didn't find a logo**, use `WebFetch` as fallback:
-   ```bash
-   # WebFetch the client site and search for logo img tags
-   curl -sL "[LOGO_URL]" -o "$OUTPUT_DIR/client-logo.png"
-   ```
-
-### 0c. CRITICAL: Logo Visibility Verification
-
-**Every logo MUST be tested on both dark and light backgrounds.**
-
-After downloading/copying logos, verify them:
-
-1. **Check file type and validity:**
-   ```bash
-   file "$OUTPUT_DIR/agency-logo.svg"
-   file "$OUTPUT_DIR/client-logo.png"
-   ```
-
-2. **For SVG logos** — open the file and check for these issues:
-   - `display:none` on the main group (broken SVG export)
-   - White fills (`#FFFFFF`, `.st6{fill:#FFFFFF}`) that disappear on white backgrounds
-   - Dark fills (`#000000`) that disappear on dark backgrounds
-   - Multi-layer SVGs where the visible layer isn't the first one
-
-3. **For PNG logos** — check if the logo has:
-   - Dark text on transparent background (invisible on dark sections)
-   - White text on transparent background (invisible on light sections)
-
-4. **Fix visibility issues using CSS filters:**
-   - Logo on dark background with dark text: add `filter: brightness(0) invert(1)` in the `<img>` style
-   - Logo on light background with white text: add `filter: brightness(0)` in the `<img>` style
-   - NEVER rely on a single logo version working everywhere — always test
-
-5. **In the hero section** — the logo pills should use:
-   - Orange pill for "Automate" (text only, no logo image needed)
-   - Outline pill for client with `<img>` tag + appropriate filter
-   - If the client logo is unreadable even with filters, use plain text instead
-
-### Logo Usage Across Sections
-
-| Section | Background | Agency Logo | Client Logo |
-|---------|-----------|-------------|-------------|
-| Hero pills | Dark | `AA-logo-white.png` inside orange pill (`height:28px`) | Client logo in outline pill (inverted if needed) |
-| CTA | Orange gradient | White text "Automate Accelerator" | White text "[Client Name]" |
-| Footer | Dark | Text only | Text only |
-
-**RULE: If a logo doesn't render cleanly, use text. Never ship a case study with invisible or broken logos.**
+1. **Run `/brand-guide-extractor` on automateaccelerator.com FIRST** to get AA's brand assets (logo SVG)
+2. **Run `/brand-guide-extractor [client-website]`** to get client logo
+3. AA logo appears in: hero logos section and CTA brands footer
+4. Client logo appears in: hero logos section (with `filter: brightness(0) invert(1)` for white-on-dark)
+5. Brand footer text: `Automate Accelerator — [Client Name]`
 
 ---
 
-## STEP 0.5 — ASK THE USER BEFORE PROCEEDING
+## DESIGN SYSTEM (from BGES template)
 
-**MANDATORY: Before doing any research or generation, ask the user these questions:**
-
-1. **"Do you have an existing brand guide or brand-assets folder for this client?"**
-   - If yes, ask for the path and use those assets instead of extracting from the website
-   - Check `brand-assets/[client-name]/` in the project directory first
-
-2. **"Do you have a content document (Google Doc, PDF, or text) with the case study content?"**
-   - If yes, ask for the path/link and use that as the primary content source
-   - This replaces most of Step 2 (content research) and ensures accuracy
-   - NEVER invent content when a source document exists
-
-3. **"Is there a hero image you'd like to use, or should I source one?"**
-   - If they have one, use it
-   - If not, source from the client's website or use a relevant stock image
-
-**Only proceed to Step 1 after getting answers to these questions.**
-
----
-
-## STEP 1 — CLIENT BRAND RESEARCH
-
-### If brand-guide-extractor was run in Step 0:
-Use the extracted data (logo URLs, colours, fonts, industry info) as your starting point. Supplement with `WebFetch` if needed.
-
-### If the user provided a brand guide:
-Read it and extract the relevant information. Skip WebFetch for brand data.
-
-### Otherwise:
-Use `WebFetch` on the client website to understand their business. Extract:
-
-- **Industry / vertical**
-- **Core product/service description**
-- **Key metrics** — any numbers, percentages, or stats on their site
-- **Client testimonials or quotes**
-- **Years in business, team size, location**
-- **Target audience**
-
-**NOTE:** The case study design uses the Automate Accelerator brand system (orange `#ff6900` accent, Outfit + Inter fonts, dark/light alternating sections). Client brand colours are NOT used in the design — only the client's content, logo, and name.
-
-### Brand Extraction Output
-
-```
-CLIENT PROFILE — [Company Name]
-────────────────────────────────
-Industry:       ______
-Years:          ______
-Size:           ______
-Location:       ______
-Services:       ______
-Key Metrics:    ______
-AGENCY LOGO:    [path] (verified on dark bg)
-CLIENT LOGO:    [path] (verified on dark bg)
-```
-
----
-
-## STEP 2 — CONTENT RESEARCH & COPYWRITING
-
-### If the user provided a content document:
-Read the document thoroughly. Use it as the SOLE source of truth for all content. Do NOT invent metrics, quotes, or claims that aren't in the document.
-
-### If no content document was provided:
-Research the company:
-1. **WebFetch the main website** — extract product descriptions, features, value props
-2. **WebSearch for the company** — find press mentions, metrics, customer stories
-3. **WebFetch any linked case studies or testimonials** on their site
-4. **Identify quantified results** — revenue growth, time saved, conversion rates, appointments booked
-
-### Use `copywriting` skill for content writing
-
-After gathering raw content, run the `copywriting` skill to write the case study sections:
-
-```
-Skill("copywriting", "Write case study content for [CLIENT_NAME]. Tone: strategic, consultative, no fluff. Sections needed: challenge narrative, solution descriptions, results summary. Source material: [paste key content]")
-```
-
-This ensures the copy is professional and consistent across all case studies your team generates.
-
-Build a content brief mapping to the **7 template sections**:
-
-### Section Content Map
-
-| Section | Content Needed |
-|---------|---------------|
-| **1. Hero (Dark)** | Headline (accent keyword on its own line), subtitle, hero image, 3 stats in dark cards |
-| **2. Business Overview (Light)** | Page label "PAGE 02", 3 info cards (years, size, location) with orange icon squares, "Who They Are" paragraphs, dark Challenge card with titled bullet points |
-| **3. The Solution (Dark)** | Page label, headline, 4 step cards with coloured icons (orange/green/teal/purple), descriptions, pill sub-items, step numbers right-aligned |
-| **4. Performance Metrics (Light)** | Page label, 3 top metrics with circular progress rings, 4 breakdown cards with colour-coded left borders + percentage ring badges, dark Follow-Up callout card |
-| **5. Key Results (Dark)** | Page label, 4 stat cards with coloured icon squares, gradient metric banner, 2 detail cards |
-| **6. What Made This Work (Light)** | Page label, 3 pillar cards with orange icon squares, framework checklist with green check dots, dark impact summary card with 4 stats |
-| **7. CTA (Orange gradient)** | Headline, subtitle, frosted glass outline button, text-based dual branding, tagline |
-
----
-
-## STEP 3 — GENERATE THE CASE STUDY HTML
-
-### Before writing code: Run `taste-frontend` for design audit
-
-After generating the first draft HTML, ALWAYS run the `taste-frontend` skill to audit it:
-
-```
-Skill("taste-frontend", "Audit this case study page for premium agency quality. Check: typography hierarchy, card depth/shadows, hover interactions, colour consistency, spacing rhythm, icon quality. The brand uses #ff6900 orange accent on alternating dark/light sections.")
-```
-
-Apply any recommendations from `taste-frontend` before proceeding to Step 4.
-
-### Generate the HTML
-
-Create a single, self-contained HTML file using the reference template. Read the template:
-
-```bash
-SKILL_DIR=$(dirname "$(find ~/.claude -path "*/case-study/SKILL.md" 2>/dev/null | head -1)")
-cat "$SKILL_DIR/templates/case-study-template.html"
-```
-
-### Design System (Fixed — Automate Accelerator Brand)
-
+### Color Tokens
 ```css
-/* These values are FIXED for all case studies */
---bg-dark:       #0c0c0e;
---bg-dark-alt:   #141417;
---bg-dark-card:  #18181c;
---bg-light:      #fafafa;
---bg-light-alt:  #f3f3f5;
---bg-white:      #ffffff;
---accent:        #ff6900;     /* Automate Accelerator orange */
---accent-hover:  #ff8533;
---green:         #34c759;
---blue:          #007aff;
---purple:        #af52de;
---teal:          #5ac8fa;
---orange:        #ff9500;
---font-display:  'Outfit';    /* Headlines */
---font-body:     'Inter';     /* Body text */
+:root {
+  --dark: #0c0c0e;
+  --dark-surface: #161619;
+  --light: #f8f7f4;
+  --text-primary: #1a1a1e;
+  --text-muted: #8b8b96;
+  --accent: #ff6900;
+  --accent-soft: rgba(255,105,0,0.08);
+}
 ```
 
-### Template Section Structure (7 sections)
+### Typography
+```
+Headline:  'Poppins', sans-serif (300-700 weight)
+Body:      'Inter', sans-serif (400-500 weight)
+```
 
-1. **Hero (Dark)** — "Success Story" badge pill, massive Outfit headline (accent keyword on its own line), subtitle, logo pills (orange "Automate" + outline client), hero image with border glow, 3 dark stat cards at bottom
-
-2. **Business Overview (Light)** — "PAGE 02" label in orange, section heading, orange underline bar, 3 info cards with solid orange icon squares (horizontal layout: icon left, text right), two-column: "Who They Are" text + dark Challenge card with titled bullet points (each challenge has a bold title + description)
-
-3. **The Solution (Dark)** — "PAGE 03" label, headline, subtitle, 4 full-width dark step cards each with: coloured icon square (orange/green/teal/purple), bold title, description, pill tags row, and step number "01"-"04" faded on the right
-
-4. **Performance Metrics (Light)** — "PAGE 04" label, headline, subtitle, 3 metric cards with circular SVG progress rings + icons inside, breakdown heading + subtitle, 4 breakdown cards with colour-coded left border bars (blue/purple/orange/green), each containing: label + percentage ring badge, 3 metric cells, dark "Follow-Up Success" callout card at bottom with orange icon
-
-5. **Key Results (Dark)** — "PAGE 05" label, headline, subtitle, 4 stat cards with coloured icon squares (purple/green/orange/blue), bold gradient metric banner with large number, 2 detail cards
-
-6. **What Made This Work (Light)** — "PAGE 06" label, centred heading, "The 3 Pillars of Success" subtitle, 3 pillar cards with orange bordered icon squares, two-column: framework checklist with green circle checkmarks + dark impact summary card with 4 stat boxes
-
-7. **CTA (Orange gradient)** — Full orange gradient background, white headline, subtitle, frosted glass outline button, text-based dual branding ("Automate Accelerator" — divider — "[Client Name]"), tagline
-
-### Typography Rules
-
-- **Font:** Outfit for headlines, Inter for body. Load via Google Fonts.
-- **Headlines:** `font-weight: 800-900`, `letter-spacing: -0.035em`, `line-height: 1.1`
-- **Body:** `font-size: 14-16px`, `line-height: 1.65-1.7`, `color: var(--text-dark-secondary)` or `var(--text-light-secondary)`
-- **Labels:** `font-size: 11px`, `font-weight: 600`, `letter-spacing: 2px`, `text-transform: uppercase`
-- **Stat numbers:** `font-weight: 900`, `letter-spacing: -0.03em`
-- **NEVER use emojis** — use SVG stroke icons for all iconography
-
-### Icon Rules
-
-- All icons are inline SVGs with `stroke` styling, NOT fill-based
-- `stroke-width: 1.8-2`, `stroke-linecap: round`, `stroke-linejoin: round`, `fill: none`
-- Icon squares: solid colour background with white or brand-coloured stroke icon inside
-- Step cards: each gets a unique colour (orange, green, teal, purple)
-- Breakdown rows: each gets a unique colour for the left border bar
-- Voice stat cards: each gets a unique coloured icon square
-
-### Card & Component Rules
-
-- Border radius: `20-24px` for large cards, `10-14px` for small elements
-- Dark cards: `background: #18181c`, `border: 1px solid rgba(255,255,255,0.07)`
-- Light cards: `background: #ffffff`, `border: 1px solid #e5e5ea`, `box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04)`
-- Hover: `translateY(-2px)` + subtle shadow increase
-- Metric banner: `linear-gradient(135deg, #e05500, #ff6900, #ff8533)` with inner radial glow and top edge highlight line
-- CTA section: full orange gradient with `backdrop-filter: blur(8px)` frosted glass button
-
-### Content Rules
-
-- **Write like a strategist, not a marketer.** No fluff, no buzzwords, no exclamation marks.
-- Lead with the business problem, not the product features
-- Every metric must have context (e.g. "40% increase in conversion rate")
-- Challenge card items each get a **bold title** (e.g. "Passive Outreach") + description paragraph
-- Solution step pills name specific tactics/tools, not vague descriptions
-- Breakdown rows show a clear funnel (e.g. sent, opens, replies)
-- The banner metric is the single most impressive number from the engagement
-- Framework checklist items are specific and actionable
-- Impact stats summarize total engagement outcomes
+### Key Rules
+- Headlines use `clamp()` for responsive sizing
+- Letter-spacing: `-0.03em` on large headlines, `-0.02em` on section titles
+- Body: 17px, line-height 1.8
+- Accent text: `<span class="accent">text</span>` (orange)
+- Section labels: title + horizontal orange line
+- Section padding: `140px 0`
+- Max-width: `1200px` with `40px` horizontal padding
 
 ---
 
-## STEP 4 — PREVIEW AND VERIFY
+## SECTION STRUCTURE
 
-**MANDATORY: Take a Playwright screenshot and visually inspect before presenting to the user.**
+The base template has these sections. **Add more sections if the source document has content that doesn't fit these.**
 
-1. Start a preview server:
-   ```bash
-   npx -y serve "$OUTPUT_DIR" -l 3458 --no-clipboard &
-   sleep 2
-   ```
+| # | Section | Background | Key Components |
+|---|---------|------------|----------------|
+| 1 | Hero | `--dark` | Badge, headline with accent, subtitle, two logos, cover image, 3 floating stat cards |
+| 2 | Business Overview | `--light` | Section label with line, narrative grid (text + quick facts), challenge items (2x2 grid) |
+| 3 | The Solution | `--dark` | Title + description with side image, timeline with dots |
+| 4+ | **Additional content sections** | Alternating | **Map ALL remaining source pages here — do NOT skip any** |
+| N-2 | Highlight Band | `--accent` | Full-width orange band with key stat headline |
+| N-1 | Testimonial | `--dark` | Large quote mark, italic quote, author with headshot |
+| N | What Made This Work | `--light` | 3 pillars, framework list, partnership quote |
+| N+1 | CTA | `--dark` | Original CTA headline from source, orange pill button |
 
-2. Take screenshots:
-   ```bash
-   # Full page
-   npx -y playwright screenshot --full-page --viewport-size="1440,900" "http://localhost:3458" "$OUTPUT_DIR/preview-full.png"
-   # Hero close-up
-   npx -y playwright screenshot --viewport-size="1440,900" "http://localhost:3458" "$OUTPUT_DIR/preview-hero.png"
-   ```
+### Adding Extra Sections
 
-3. **Visually verify (READ the screenshot):**
-   - [ ] Both logos visible in hero pills (not broken/invisible)
-   - [ ] Alternating dark/light sections render correctly
-   - [ ] Orange accent colour is consistent
-   - [ ] All SVG icons render (not blank squares)
-   - [ ] Circular progress rings have correct stroke-dashoffset
-   - [ ] Colour-coded left borders on breakdown cards
-   - [ ] Metric banner gradient renders
-   - [ ] CTA has full orange gradient background
-   - [ ] No text is invisible (white-on-white or dark-on-dark)
-
-4. Kill the server:
-   ```bash
-   kill $(lsof -ti:3458) 2>/dev/null
-   ```
-
-**If ANY logo is invisible or broken, fix it before proceeding. Use CSS `filter: brightness(0) invert(1)` or switch to text.**
-
-### Run `polish` for final refinement
-
-After the screenshot passes visual checks, run the `polish` skill for a final quality pass:
-
-```
-Skill("polish", "Final quality pass on this case study. Check: alignment, spacing consistency, micro-details, card border consistency, font weight hierarchy, colour accuracy.")
-```
-
-This catches subtle issues like inconsistent padding, misaligned elements, or font weight mismatches that screenshots alone won't reveal.
+When the source has content beyond the base template (e.g., Email Campaigns, Voice Outreach, Results):
+- Use `--light` background for data/content sections (reuse `.results` / `.overview` CSS)
+- Use `--dark` background for process/story sections (reuse `.solution` CSS with timeline)
+- Alternate dark/light for visual rhythm
+- Use existing component patterns: timeline for processes, tables for breakdowns, grids for comparisons
 
 ---
 
-## STEP 5 — EXPORT TO PDF
+## STOCK IMAGES
 
-The export script supports two modes:
+### Rules
+- **Every image MUST be a DIFFERENT photo** — never reuse the same URL across sections
+- **No Black people in stock photos** — this is a client preference, check every image
+- **Verify every URL returns HTTP 200** before exporting — use `curl -s -o /dev/null -w "%{http_code}" URL`
+- If a URL returns 404, find an alternative immediately
+- Use Unsplash URLs directly in `<img>` tags
 
+### Image Sizes
+```
+Cover/hero:    ?w=1400&h=500&fit=crop&q=85
+Overview:      ?w=700&h=360&fit=crop&q=85
+Solution:      ?w=600&h=400&fit=crop&q=85
+Content pages: ?w=1200&h=400&fit=crop&q=85
+What Worked:   ?w=600&h=500&fit=crop&q=85
+```
+
+### Client Headshots
+- If the user provides a headshot image, copy it directly — do NOT try to crop from screenshots
+- If no headshot is available, ask the user for one rather than using a low-quality crop
+- Display headshots at 64px circular with `object-fit: cover; border: 2px solid rgba(255,255,255,0.15)`
+
+---
+
+## PRODUCTION STEPS
+
+1. **Read the BGES template** — copy its full CSS
+2. **Run `/brand-guide-extractor`** for both AA and client — download logos
+3. **Map ALL source content** — list every section, verify nothing is unmapped
+4. **Write HTML** — using template CSS, all source content, unique images
+5. **Verify all image URLs** — curl each one, confirm HTTP 200
+6. **Export to single-page PDF** — using Puppeteer with dynamic height
+7. **Run full QA** — see QA section below
+8. **Open the PDF** for the user
+
+---
+
+## TECHNICAL PIPELINE
+
+### Working Directory
 ```bash
-SKILL_DIR=$(dirname "$(find ~/.claude -path "*/case-study/SKILL.md" 2>/dev/null | head -1)")
-
-# For the v3 editorial scrolling design (RECOMMENDED):
-node "$SKILL_DIR/scripts/export-pdf.js" "$OUTPUT_DIR/index.html" "$OUTPUT_DIR/[client-name]-case-study.pdf" --scroll
-
-# For fixed A4 page designs:
-node "$SKILL_DIR/scripts/export-pdf.js" "$OUTPUT_DIR/index.html" "$OUTPUT_DIR/[client-name]-case-study.pdf"
+cd output/case-study-work
+npm install puppeteer  # if not already installed
 ```
 
-**Always use `--scroll` for the editorial template** — it captures the full page height as one continuous PDF. The default A4 mode is for fixed-page designs only.
+### Puppeteer Export (SINGLE PAGE — NOT A4 PAGINATED)
 
-The script:
-- Waits for Google Fonts to load
-- Waits for all images to load (with 5s timeout per image)
-- Renders at 1440px width with all backgrounds intact
-- Outputs the full page as a single continuous PDF
+```javascript
+const puppeteer = require('puppeteer');
+const path = require('path');
+
+(async () => {
+  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1200, height: 800 });
+  await page.goto('file://' + path.join(__dirname, 'case-study.html'), {
+    waitUntil: 'networkidle0',
+    timeout: 30000
+  });
+
+  // Get actual content height for single-page export
+  const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
+
+  // Export as SINGLE PAGE matching exact content height
+  await page.pdf({
+    path: path.join(__dirname, '..', '[client-name]-case-study-v1.pdf'),
+    width: '1200px',
+    height: bodyHeight + 'px',
+    printBackground: true,
+    margin: { top: 0, right: 0, bottom: 0, left: 0 }
+  });
+
+  await browser.close();
+  console.log('SUCCESS — single-page PDF');
+})();
+```
+
+**IMPORTANT:** Use dynamic height (`bodyHeight + 'px'`), NOT `format: 'A4'`. A4 causes content to overflow across page boundaries.
 
 ---
 
-## STEP 6 — DELIVER
+## QA VERIFICATION (MANDATORY BEFORE DELIVERY)
 
-Present the user with:
-1. **Preview screenshot** of the hero section
-2. **File paths** for both HTML and PDF
-3. **Key stats** used in the case study
-4. **Section summary** — confirm all 7 sections rendered correctly
-5. **Logo status** — confirm both logos are visible and rendering correctly
-6. **Deployment note** — the HTML is self-contained and can be deployed to any static host or opened in Chrome for PDF export
+**You MUST complete ALL QA checks before opening the PDF for the user. No exceptions.**
+
+### Step 1: Verify All Image URLs
+```bash
+# curl every Unsplash URL in the HTML and confirm HTTP 200
+# If any return non-200, replace immediately
+```
+
+### Step 2: Full-Page Screenshot Review
+```javascript
+// Take a full-page screenshot and READ it with the Read tool
+await page.screenshot({ path: 'full-review.png', fullPage: true, type: 'png' });
+```
+Visually inspect the ENTIRE page top-to-bottom. Check for:
+- Broken image icons
+- Layout overflow or clipping
+- Excessive whitespace or negative spacing
+- Text cutoff or overlap
+- Font loading issues
+
+### Step 3: Section-by-Section Screenshot
+```javascript
+// Screenshot EVERY section individually and READ each one
+const sections = await page.$$('section');
+for (let i = 0; i < sections.length; i++) {
+  await sections[i].screenshot({ path: `qa-section-${i+1}.png` });
+}
+```
+Check each section for:
+- Images loading correctly (no broken icons, no placeholder alt text visible)
+- No Black people in stock photos
+- Text is readable and properly styled
+- Headshots display cleanly (no artefacts, dark backgrounds, white borders)
+- Line heights are correct (especially highlight band)
+
+### Step 4: Content Audit
+Compare EVERY paragraph, quote, stat, and section title from the source document against the HTML output:
+- Is ALL source content present?
+- Was any content changed or reworded?
+- Was anything invented that wasn't in the source?
+- Are CTAs using the original wording?
+- Are quotes exact?
+
+### QA Pass/Fail
+Only deliver the PDF when ALL checks pass:
+- [ ] All image URLs return HTTP 200
+- [ ] Full-page screenshot shows no visual issues
+- [ ] Every section screenshot is clean
+- [ ] No Black people in any stock photos
+- [ ] No broken images or alt text showing
+- [ ] All source content is present and unaltered
+- [ ] No invented content
+- [ ] CTAs match source wording exactly
+- [ ] Quotes match source text exactly
+- [ ] Highlight band line-height is tight (1.15)
+- [ ] Headshots are clean (use user-provided images, not screenshot crops)
+- [ ] PDF is single-page (no content cut across page boundaries)
 
 ---
 
-## COMMON ISSUES & FIXES
+## WRITING GUIDELINES
 
-### Logo Issues (Most Common Problem)
-
-| Problem | Cause | Fix |
-|---------|-------|-----|
-| Logo invisible on dark bg | PNG has dark text on transparent bg | Add `style="filter: brightness(0) invert(1)"` to the `<img>` tag |
-| Logo invisible on light bg | SVG has white fills | Add `style="filter: brightness(0)"` to the `<img>` tag |
-| SVG renders blank | SVG has `display:none` on main group | Download a different variant or use text instead |
-| Logo renders but is distorted | SVG viewBox doesn't match content | Set explicit `height` on the `<img>` tag, let width auto |
-| Website logo URL returns 404 | CDN path changed | Check `brand-assets/` folder first, or try alternative selectors on the page |
-
-### Font Issues
-
-| Problem | Fix |
-|---------|-----|
-| Outfit font not loading | Check Google Fonts URL includes `family=Outfit:wght@300;400;500;600;700;800;900` |
-| Fonts look different in PDF | Puppeteer `export-pdf.js` already waits for `document.fonts.ready` — ensure network is idle |
-
-### Layout Issues
-
-| Problem | Fix |
-|---------|-----|
-| Sections not alternating | Check background colours: odd sections = dark, even = light (except CTA = orange) |
-| Cards overlapping on mobile | Ensure all grids collapse to `grid-template-columns: 1fr` at 600px |
-| Circular rings not rendering | Check `stroke-dasharray` and `stroke-dashoffset` values are calculated correctly |
-
-### Circular Progress Ring Math
-
-To draw a ring at X% filled:
-```
-circumference = 2 * PI * radius = 2 * 3.14159 * r
-dasharray = circumference
-dashoffset = circumference * (1 - percentage/100)
-```
-
-For the template's rings (r=24 in top metrics, r=18 in breakdown):
-- Top metrics: `circumference = 150.8`, so 75% = `dashoffset: 37.7`
-- Breakdown: `circumference = 113.1`, so 75% = `dashoffset: 28.3`
+- Australian English spelling throughout
+- Active voice, results-focused, data-dense
+- Specific numbers over vague claims — numbers are the hero
+- Body copy: professional, confident, warm — not stiff
+- Forbidden words: "unlock", "revolutionise", "seamless", "game-changing", "synergy", "leverage" (as verb)
+- Connect every result to a tangible business outcome
+- **Only include content from source documents — never invent stats, table data, or copy**
+- Use placeholders for missing data: `[METRIC]`, `[CLIENT TESTIMONIAL NEEDED]`
 
 ---
 
-## QUALITY CHECKLIST
+## COMPLIANCE RULES
 
-Before delivering, verify ALL of the following:
+- **Branding is ALWAYS Automate Accelerator** — never brand as the client
+- **Read the BGES template HTML first** — copy its CSS verbatim
+- **Run `/brand-guide-extractor` for both AA and client** before starting
+- **Stock images from Unsplash are mandatory** — never ship without real photography
+- **No Black people in stock photos** — client preference
+- **Every image must be unique** — never reuse the same Unsplash URL
+- **All source content must be present** — never skip sections to fit a template
+- **Never alter CTAs, quotes, or headlines** from what the source provides
+- **Never invent content** — no fabricated stats, table data, or descriptions
+- **Single-page PDF export** — use dynamic height, NOT A4 pagination
+- **Full QA verification mandatory** — full-page + section screenshots + content audit before delivery
+- If user provides a headshot, use it directly — never try to crop from screenshots
+- Highlight band `line-height: 1.15` override is required
+- Timeline layout for solution processes
+- Testimonial section with large quote mark and author headshot
+- CTA uses the EXACT wording from the source document
 
-### Logos & Branding
-- [ ] Agency logo pill visible in hero (orange "Automate" pill)
-- [ ] Client logo/name visible in hero (outline pill, inverted if needed)
-- [ ] CTA shows both brand names as text on orange gradient
-- [ ] No broken image icons anywhere on the page
+---
 
-### Visual Design
-- [ ] Sections alternate: dark, light, dark, light, dark, light, orange-gradient
-- [ ] Page labels appear ("PAGE 02", "PAGE 03", etc.)
-- [ ] Orange underline bar below Business Overview heading
-- [ ] Info cards have solid orange icon squares (horizontal layout)
-- [ ] Challenge card is DARK (not orange gradient)
-- [ ] Solution step cards have 4 different coloured icons
-- [ ] Step numbers "01"-"04" appear faded on the right
-- [ ] Performance metrics have circular SVG progress rings
-- [ ] Breakdown cards have colour-coded left border bars
-- [ ] Percentage ring badges on each breakdown card
-- [ ] Follow-up callout is a dark card with orange icon
-- [ ] Voice stats have coloured icon squares
-- [ ] Metric banner has bold orange gradient with inner glow
-- [ ] Pillar cards have orange bordered icon squares
-- [ ] Checklist uses green circle checkmarks
-- [ ] Impact card is dark within the light section
-- [ ] CTA has full orange gradient background
-- [ ] CTA button has frosted glass / outline style
-
-### Content
-- [ ] All metrics are real numbers from the engagement (not invented)
-- [ ] Challenge items each have a bold title + description
-- [ ] Solution pills name specific tactics
-- [ ] Breakdown shows funnel data (sent, opens, replies)
-- [ ] Framework checklist has 5+ specific items
-
-### Technical
-- [ ] Page is fully responsive (test at 900px and 600px)
-- [ ] No console errors
-- [ ] Google Fonts load correctly (Outfit + Inter)
-- [ ] All SVG icons render (no blank squares or emojis)
-- [ ] PDF exports with all backgrounds intact
+*Case Study Skill | v4.0 | BGES Reference Design — Content-Faithful, Single-Page PDF, Full QA Pipeline*
